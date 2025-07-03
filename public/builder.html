@@ -1,37 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Mailora Builder</title>
   <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet"/>
-  <style> body, html { height: 100%; margin: 0; } </style>
+  <style>
+    body, html { margin: 0; height: 100%; }
+    #gjs { height: 100vh; }
+  </style>
 </head>
 <body>
-  <div id="gjs" style="height:100%; overflow:hidden;"></div>
+  <div id="gjs"></div>
 
   <script src="https://unpkg.com/grapesjs"></script>
   <script>
-  const editor = grapesjs.init({
-    container: '#gjs',
-    height: '100%',
-    fromElement: true,
-    storageManager: false,
-    panels: { defaults: [] },
-    assetManager: {
-      upload: '/upload',
-      uploadName: 'image',
-      headers: { 'X-Requested-With': 'XMLHttpRequest' },
-      uploadText: 'Drop files here or click to upload',
-    },
-  });
-
-  // Export button
-  editor.Panels.addButton('options', [{
-    id: 'export',
-    className: 'fa fa-code',
-    command: 'export-template',
-    attributes: { title: 'Export HTML' }
-  }]);
-</script>
-
+    const editor = grapesjs.init({
+      container: '#gjs',
+      height: '100%',
+      fromElement: false,
+      storageManager: false,
+      panels: { defaults: [] },
+      blockManager: {
+        appendTo: '#blocks',
+        blocks: [
+          {
+            id: 'section',
+            label: 'Section',
+            content: '<section class="section">Your section here</section>',
+          },
+          {
+            id: 'text',
+            label: 'Text',
+            content: '<div data-gjs-type="text">Insert your text here</div>',
+          },
+          {
+            id: 'image',
+            label: 'Image',
+            content: '<img src="https://via.placeholder.com/350x250"/>',
+          }
+        ]
+      }
+    });
+  </script>
 </body>
 </html>
