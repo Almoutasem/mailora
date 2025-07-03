@@ -19,13 +19,29 @@
       height: '100%',
       fromElement: false,
       storageManager: false,
-      panels: { defaults: [] },
+      panels: {
+        defaults: [
+          {
+            id: 'basic-actions',
+            el: '.panel__basic-actions',
+            buttons: [
+              {
+                id: 'visibility',
+                active: true,
+                label: '<u>B</u>',
+                command: 'sw-visibility',
+              },
+            ],
+          },
+        ]
+      },
       blockManager: {
-        appendTo: '#blocks',
+        appendTo: '#gjs',
         blocks: [
           {
             id: 'section',
             label: 'Section',
+            attributes: { class: 'gjs-block-section' },
             content: '<section class="section">Your section here</section>',
           },
           {
