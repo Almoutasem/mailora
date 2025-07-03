@@ -1,11 +1,12 @@
-const express = require('express');
+const express = require("express");
 const app = express();
+const path = require("path");
+
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get("/", (req, res) => {
+  res.redirect("/builder.html");
+});
+
 const PORT = process.env.PORT || 3000;
-
-app.get('/', (req, res) => {
-  res.send('Mailora is live 🎉');
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Mailora running on port ${PORT}`));

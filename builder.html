@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mailora Builder</title>
+  <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet"/>
+  <style> body, html { height: 100%; margin: 0; } </style>
+</head>
+<body>
+  <div id="gjs" style="height:100%; overflow:hidden;"></div>
+
+  <script src="https://unpkg.com/grapesjs"></script>
+  <script>
+    const editor = grapesjs.init({
+      container: '#gjs',
+      height: '100%',
+      fromElement: true,
+      storageManager: false,
+      panels: { defaults: [] },
+    });
+
+    // Export button
+    editor.Panels.addButton('options', [{
+      id: 'export',
+      className: 'fa fa-code',
+      command: 'export-template',
+      attributes: { title: 'Export HTML' }
+    }]);
+  </script>
+</body>
+</html>
