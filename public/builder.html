@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Mailora Builder</title>
-  <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet"/>
+  <meta charset="UTF-8">
+  <title>Mailora Email Builder</title>
+  <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet" />
   <style>
-    body, html {
+    html, body {
       margin: 0;
       height: 100%;
-      font-family: Arial, sans-serif;
     }
     #gjs {
       height: 90vh;
       border-bottom: 1px solid #ccc;
     }
     .export-panel {
-      padding: 10px;
       text-align: center;
+      padding: 10px;
     }
     .export-panel button {
       background-color: #111827;
-      color: #fff;
-      border: none;
+      color: white;
       padding: 10px 20px;
+      border: none;
       font-size: 16px;
       border-radius: 6px;
       cursor: pointer;
@@ -35,7 +34,6 @@
 <body>
 
   <div id="gjs"></div>
-
   <div class="export-panel">
     <button onclick="downloadHTML()">⬇ Export HTML</button>
   </div>
@@ -47,30 +45,26 @@
       height: '100%',
       fromElement: false,
       storageManager: false,
-      panels: {
-        defaults: []
-      },
+      panels: { defaults: [] },
       blockManager: {
         appendTo: '#gjs',
-        blocks: [
-          {
-            id: 'section',
-            label: 'Section',
-            attributes: { class: 'gjs-block-section' },
-            content: '<section class="section"><h1>Section Title</h1><p>Start writing here...</p></section>',
-          },
-          {
-            id: 'text',
-            label: 'Text',
-            content: '<div data-gjs-type="text">Insert your text here</div>',
-          },
-          {
-            id: 'image',
-            label: 'Image',
-            content: '<img src="https://via.placeholder.com/600x200"/>',
-          }
-        ]
       }
+    });
+
+    // Register Blocks
+    editor.BlockManager.add('section', {
+      label: 'Section',
+      content: '<section style="padding: 25px; background-color: #f3f3f3"><h1>Section Title</h1><p>Write here...</p></section>',
+    });
+
+    editor.BlockManager.add('text', {
+      label: 'Text',
+      content: '<div data-gjs-type="text">Insert your text</div>',
+    });
+
+    editor.BlockManager.add('image', {
+      label: 'Image',
+      content: '<img src="https://via.placeholder.com/600x200"/>',
     });
 
     function downloadHTML() {
@@ -81,7 +75,6 @@
           <head><style>${css}</style></head>
           <body>${html}</body>
         </html>`;
-      
       const blob = new Blob([fullHtml], { type: 'text/html' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
