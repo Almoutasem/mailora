@@ -17,29 +17,24 @@
             --light: #f8fafc;
             --gray: #e2e8f0;
             --text: #334155;
-            --border-radius: 10px;
+            --border-radius: 8px;
+            --shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: #f1f5f9;
             color: var(--text);
             overflow: hidden;
             display: flex;
             flex-direction: column;
             height: 100vh;
-        }
-        
-        .brand-gradient {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
         
         .sidebar-icon {
@@ -66,7 +61,7 @@
             border-radius: var(--border-radius);
             padding: 12px;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: var(--shadow);
         }
         
         .drag-item:hover {
@@ -81,7 +76,7 @@
             margin: 0 auto;
             background-color: white;
             min-height: 80vh;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow);
             border-radius: var(--border-radius);
             overflow: hidden;
             transition: all 0.3s ease;
@@ -117,7 +112,7 @@
             border-radius: var(--border-radius);
             padding: 6px;
             z-index: 10;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: var(--shadow);
         }
         
         .canvas-block.selected .block-controls {
@@ -243,45 +238,6 @@
             display: block;
         }
         
-        .template-card {
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border: 1px solid var(--gray);
-        }
-        
-        .template-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            border-color: var(--primary);
-        }
-        
-        .template-thumb {
-            height: 150px;
-            background-size: cover;
-            background-position: center;
-        }
-        
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #c7d2fe;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary);
-        }
-        
         .progress-bar {
             height: 4px;
             background: var(--primary);
@@ -298,12 +254,13 @@
             align-items: center;
             justify-content: center;
             border-radius: var(--border-radius);
-            padding: 10px 20px;
+            padding: 10px 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             gap: 8px;
             border: none;
+            font-size: 14px;
         }
         
         .btn-primary {
@@ -366,24 +323,6 @@
             font-weight: bold;
         }
         
-        .template-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(32, 157, 80, 0.9);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .template-card:hover .template-overlay {
-            opacity: 1;
-        }
-        
         .editor-container {
             flex: 1;
             overflow: auto;
@@ -441,53 +380,6 @@
             background: white;
             cursor: pointer;
             font-size: 14px;
-        }
-        
-        .image-toolbar {
-            position: absolute;
-            top: -45px;
-            left: 0;
-            background: var(--dark);
-            color: white;
-            border-radius: var(--border-radius);
-            padding: 8px;
-            display: flex;
-            gap: 5px;
-            z-index: 20;
-        }
-        
-        .image-resize-handle {
-            position: absolute;
-            bottom: -8px;
-            right: -8px;
-            width: 16px;
-            height: 16px;
-            background: var(--primary);
-            border-radius: 50%;
-            cursor: nwse-resize;
-            z-index: 10;
-        }
-        
-        .image-shape-controls {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        
-        .shape-btn {
-            width: 36px;
-            height: 36px;
-            border: 1px solid var(--gray);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        
-        .shape-btn.active {
-            border-color: var(--primary);
-            background: var(--primary-light);
         }
         
         .upload-modal {
@@ -586,6 +478,7 @@
             border-radius: var(--border-radius);
             transition: all 0.3s;
             max-width: 300px;
+            color: var(--dark);
         }
         
         .campaign-title:focus {
@@ -816,15 +709,24 @@
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 30px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: var(--primary);
         }
         
         .sidebar-nav {
             display: flex;
             flex-direction: column;
             gap: 20px;
+        }
+        
+        /* Simplified UI elements */
+        .btn-save-option {
+            padding: 10px 16px;
+            font-size: 14px;
+            margin-right: 8px;
+        }
+        
+        .toolbar-actions .btn {
+            padding: 10px 16px;
         }
     </style>
 </head>
@@ -860,11 +762,11 @@
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="flex items-center">
-            <div class="text-xl font-bold mr-4">CAMPAIGNCRAFT <span class="brand-gradient">PRO</span></div>
-            <div class="text-sm opacity-90 hidden md:block">Premium Email Builder</div>
+            <div class="text-xl font-bold mr-4 text-white">CAMPAIGNCRAFT PRO</div>
+            <div class="text-sm opacity-90 hidden md:block text-white/80">Premium Email Builder</div>
         </div>
         <div class="user-info">
-            <div class="text-sm mr-4 hidden md:block">Welcome back, <span class="font-semibold">Alex Morgan</span></div>
+            <div class="text-sm mr-4 hidden md:block text-white">Welcome back, <span class="font-semibold">Alex Morgan</span></div>
             <div class="flex gap-4">
                 <button class="btn-icon text-white hover:bg-white/20">
                     <i class="fas fa-bell"></i>
@@ -889,10 +791,6 @@
                 <div id="style-tab" class="sidebar-icon">
                     <i class="fas fa-palette fa-lg"></i>
                     <span class="text-xs mt-1">Style</span>
-                </div>
-                <div id="templates-tab" class="sidebar-icon">
-                    <i class="fas fa-layer-group fa-lg"></i>
-                    <span class="text-xs mt-1">Templates</span>
                 </div>
             </div>
         </div>
@@ -941,65 +839,6 @@
                     <span class="text-sm">Footer</span>
                 </div>
             </div>
-            
-            <!-- Template Gallery -->
-            <div id="templates-panel" class="hidden mt-8">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-lg">Email Templates</h3>
-                    <div class="relative">
-                        <input type="text" placeholder="Search templates..." class="text-sm border border-gray-300 rounded-lg px-3 py-1.5 w-40">
-                        <i class="fas fa-search absolute right-3 top-2.5 text-gray-400"></i>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="template-card">
-                        <div class="template-thumb bg-gradient-to-r from-green-400 to-teal-600 relative">
-                            <div class="template-overlay">
-                                <button class="btn-primary">Use Template</button>
-                            </div>
-                        </div>
-                        <div class="p-3 bg-white">
-                            <p class="text-sm font-medium">Modern Newsletter</p>
-                            <div class="flex items-center mt-1">
-                                <span class="text-xs text-green-500 bg-green-100 px-2 py-0.5 rounded-full">Popular</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="template-card">
-                        <div class="template-thumb bg-gradient-to-r from-green-400 to-emerald-600 relative">
-                            <div class="template-overlay">
-                                <button class="btn-primary">Use Template</button>
-                            </div>
-                        </div>
-                        <div class="p-3 bg-white">
-                            <p class="text-sm font-medium">Product Launch</p>
-                        </div>
-                    </div>
-                    <div class="template-card">
-                        <div class="template-thumb bg-gradient-to-r from-green-400 to-cyan-600 relative">
-                            <div class="template-overlay">
-                                <button class="btn-primary">Use Template</button>
-                            </div>
-                        </div>
-                        <div class="p-3 bg-white">
-                            <p class="text-sm font-medium">Promotional</p>
-                        </div>
-                    </div>
-                    <div class="template-card">
-                        <div class="template-thumb bg-gradient-to-r from-green-400 to-blue-600 relative">
-                            <div class="template-overlay">
-                                <button class="btn-primary">Use Template</button>
-                            </div>
-                        </div>
-                        <div class="p-3 bg-white">
-                            <p class="text-sm font-medium">Event Invitation</p>
-                            <div class="flex items-center mt-1">
-                                <span class="text-xs text-green-500 bg-green-100 px-2 py-0.5 rounded-full">New</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Main Content -->
@@ -1008,7 +847,7 @@
             <div class="top-toolbar">
                 <div>
                     <h1 class="flex items-center">
-                        <span class="mr-2">Campaign:</span>
+                        <span class="mr-2 text-gray-600">Campaign:</span>
                         <input type="text" value="Summer Promotion 2023" class="campaign-title">
                     </h1>
                 </div>
@@ -1030,17 +869,18 @@
                         <i class="fas fa-eye"></i>
                         <span>Preview</span>
                     </button>
-                    <div class="relative">
-                        <button id="save-btn" class="btn btn-primary">
-                            <i class="fas fa-save"></i>
-                            <span>Save</span>
-                        </button>
-                        <div class="absolute right-0 top-full mt-1 w-48 bg-white rounded-lg shadow-lg py-1 hidden z-10 border border-gray-200" id="save-options">
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-file-alt mr-2"></i>Save as Draft</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-layer-group mr-2"></i>Save as Template</a>
-                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"><i class="fas fa-clock mr-2"></i>Save & Schedule</a>
-                        </div>
-                    </div>
+                    <button id="save-draft-btn" class="btn btn-secondary">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Save as Draft</span>
+                    </button>
+                    <button id="save-template-btn" class="btn btn-secondary">
+                        <i class="fas fa-layer-group"></i>
+                        <span>Save as Template</span>
+                    </button>
+                    <button id="save-schedule-btn" class="btn btn-primary">
+                        <i class="fas fa-clock"></i>
+                        <span>Save & Schedule</span>
+                    </button>
                     <button id="export-btn" class="btn btn-primary">
                         <i class="fas fa-code"></i>
                         <span>Export HTML</span>
@@ -1187,11 +1027,10 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const editor = document.getElementById('editor');
-            const blockList = document.getElementById('block-list');
+            const blockList = document.querySelector('.block-grid');
             const stylePanel = document.getElementById('style-panel');
             const elementStylesContainer = document.getElementById('element-styles');
             const globalStylesContainer = document.getElementById('global-styles');
-            const templatesPanel = document.getElementById('templates-panel');
             const previewModal = document.getElementById('preview-modal');
             const uploadModal = document.getElementById('upload-modal');
             const previewFrame = document.getElementById('preview-frame');
@@ -1203,13 +1042,6 @@
                 stack: [editor.innerHTML],
                 limit: 50,
                 position: 0,
-            };
-            
-            // Initialize tabs
-            const tabs = {
-                'add-block-tab': blockList,
-                'templates-tab': templatesPanel,
-                'style-tab': globalStylesContainer
             };
             
             // Initialize SortableJS for the editor
@@ -1439,10 +1271,6 @@
             function selectElement(el) {
                 if (selectedElement) {
                     selectedElement.classList.remove('selected');
-                    
-                    // Remove text toolbar if it exists
-                    const existingToolbar = selectedElement.querySelector('.editor-toolbar');
-                    if(existingToolbar) existingToolbar.remove();
                 }
                 
                 selectedElement = el;
@@ -1450,9 +1278,8 @@
                     selectedElement.classList.add('selected');
                     updateStylePanel();
                     
-                    // For image blocks, show the image toolbar
                     if(selectedElement.dataset.type === 'image') {
-                        selectedImage = clickedBlock.querySelector('img');
+                        selectedImage = selectedElement.querySelector('img');
                     }
                 }
             }
@@ -1587,99 +1414,6 @@
 
                 elementStylesContainer.innerHTML = stylesHtml;
             }
-            
-            function addTextToolbar() {
-                const editable = selectedElement.querySelector('[contenteditable="true"]');
-                if(!editable) return;
-                
-                // Create toolbar
-                const toolbar = document.createElement('div');
-                toolbar.className = 'editor-toolbar';
-                
-                // Font family
-                toolbar.innerHTML = `
-                    <div class="toolbar-group">
-                        <select class="toolbar-select" id="font-family">
-                            <option value="Segoe UI, sans-serif">Segoe UI</option>
-                            <option value="Arial, sans-serif">Arial</option>
-                            <option value="Georgia, serif">Georgia</option>
-                            <option value="monospace">Monospace</option>
-                        </select>
-                    </div>
-                    
-                    <div class="toolbar-group">
-                        <select class="toolbar-select" id="font-size">
-                            <option value="12px">Small</option>
-                            <option value="14px">Normal</option>
-                            <option value="18px">Large</option>
-                            <option value="24px">X-Large</option>
-                        </select>
-                    </div>
-                    
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" data-command="bold"><i class="fas fa-bold"></i></button>
-                        <button class="toolbar-btn" data-command="italic"><i class="fas fa-italic"></i></button>
-                        <button class="toolbar-btn" data-command="underline"><i class="fas fa-underline"></i></button>
-                    </div>
-                    
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="h1"><i class="fas fa-heading"></i> H1</button>
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="h2"><i class="fas fa-heading"></i> H2</button>
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="h3"><i class="fas fa-heading"></i> H3</button>
-                        <button class="toolbar-btn" data-command="formatBlock" data-value="h4"><i class="fas fa-heading"></i> H4</button>
-                    </div>
-                    
-                    <div class="toolbar-group">
-                        <input type="color" id="text-color" value="#000000" class="w-8 h-8 p-1 border border-gray-300 rounded-md cursor-pointer">
-                        <input type="color" id="bg-color" value="#ffffff" class="w-8 h-8 p-1 border border-gray-300 rounded-md cursor-pointer">
-                    </div>
-                    
-                    <div class="toolbar-group">
-                        <button class="toolbar-btn" data-command="justifyLeft"><i class="fas fa-align-left"></i></button>
-                        <button class="toolbar-btn" data-command="justifyCenter"><i class="fas fa-align-center"></i></button>
-                        <button class="toolbar-btn" data-command="justifyRight"><i class="fas fa-align-right"></i></button>
-                        <button class="toolbar-btn" data-command="justifyFull"><i class="fas fa-align-justify"></i></button>
-                    </div>
-                `;
-                
-                // Insert before the editable element
-                const container = editable.parentNode;
-                container.insertBefore(toolbar, editable);
-                
-                // Add event listeners for toolbar buttons
-                toolbar.querySelectorAll('button').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const command = this.dataset.command;
-                        const value = this.dataset.value;
-                        document.execCommand(command, false, value);
-                        editable.focus();
-                    });
-                });
-                
-                // Font family change
-                toolbar.querySelector('#font-family').addEventListener('change', function() {
-                    document.execCommand('fontName', false, this.value);
-                    editable.focus();
-                });
-                
-                // Font size change
-                toolbar.querySelector('#font-size').addEventListener('change', function() {
-                    document.execCommand('fontSize', false, this.value);
-                    editable.focus();
-                });
-                
-                // Text color change
-                toolbar.querySelector('#text-color').addEventListener('input', function() {
-                    document.execCommand('foreColor', false, this.value);
-                    editable.focus();
-                });
-                
-                // Background color change
-                toolbar.querySelector('#bg-color').addEventListener('input', function() {
-                    document.execCommand('hiliteColor', false, this.value);
-                    editable.focus();
-                });
-            }
 
             // --- Event Handlers ---
             document.addEventListener('click', (e) => {
@@ -1690,12 +1424,6 @@
                         icon.classList.remove('active');
                     });
                     e.target.closest('.sidebar-icon').classList.add('active');
-                    
-                    // Show the corresponding panel
-                    Object.keys(tabs).forEach(key => {
-                        if (tabs[key]) tabs[key].classList.add('hidden');
-                    });
-                    if (tabs[tabId]) tabs[tabId].classList.remove('hidden');
                 }
                 
                 // Canvas block selection
@@ -1703,7 +1431,6 @@
                 if (clickedBlock) {
                     selectElement(clickedBlock);
                     
-                    // For image blocks, show the image toolbar
                     if(clickedBlock.dataset.type === 'image') {
                         selectedImage = clickedBlock.querySelector('img');
                     }
@@ -1716,13 +1443,6 @@
                     }
                 }
                 
-                // Save options dropdown
-                if (e.target.closest('#save-btn')) {
-                    document.getElementById('save-options').classList.toggle('hidden');
-                } else {
-                    document.getElementById('save-options').classList.add('hidden');
-                }
-                
                 // Device preview buttons
                 if (e.target.closest('.device-btn')) {
                     document.querySelectorAll('.device-btn').forEach(btn => {
@@ -1730,7 +1450,7 @@
                     });
                     e.target.closest('.device-btn').classList.add('active');
                     const width = e.target.closest('.device-btn').dataset.width;
-                    editor.style.width = width + 'px';
+                    document.querySelector('.editor-canvas').style.width = width + 'px';
                 }
                 
                 // Image shape buttons
@@ -1902,6 +1622,22 @@
                 a.download = 'campaigncraft-email.html';
                 a.click();
                 URL.revokeObjectURL(a.href);
+            });
+
+            // Save options
+            document.getElementById('save-draft-btn').addEventListener('click', () => {
+                alert('Draft saved successfully');
+                saveState();
+            });
+            
+            document.getElementById('save-template-btn').addEventListener('click', () => {
+                alert('Template saved successfully');
+                saveState();
+            });
+            
+            document.getElementById('save-schedule-btn').addEventListener('click', () => {
+                alert('Campaign scheduled successfully');
+                saveState();
             });
 
             // --- History (Undo/Redo) ---
