@@ -1,292 +1,1181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Mailora – Email Builder</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #f9f9fb;
-      display: flex;
-      flex-direction: row;
-      height: 100vh;
-    }
-    .main-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .toolbar, .stylebar {
-      display: flex;
-      gap: 10px;
-      padding: 10px 20px;
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-    }
-    .toolbar button, .toolbar select,
-    .stylebar input, .stylebar select {
-      padding: 6px 12px;
-      cursor: pointer;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      background: #fff;
-    }
-    #editor, #preview {
-      flex: 1;
-      overflow-y: auto;
-      background: #fff;
-      padding: 30px;
-      font-size: 16px;
-    }
-    #preview {
-      display: none;
-      white-space: pre-wrap;
-    }
-    .block {
-      border: 1px dashed #ccc;
-      background: #fefefe;
-      margin-bottom: 12px;
-      padding: 14px;
-      position: relative;
-      cursor: move;
-    }
-    .remove-btn {
-      position: absolute;
-      top: 6px;
-      right: 6px;
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .drag-panel {
-      width: 180px;
-      background: #2b2d42;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px 10px;
-      gap: 10px;
-      border-left: 1px solid #1a1a1a;
-    }
-    .drag-panel h4 {
-      color: #ccc;
-      font-weight: normal;
-      margin-bottom: 12px;
-    }
-    .drag-item {
-      width: 100%;
-      background: #3a3d5c;
-      padding: 10px 12px;
-      border-radius: 6px;
-      text-align: center;
-      cursor: grab;
-      user-select: none;
-      transition: background 0.2s;
-    }
-    .drag-item:hover {
-      background: #4e5170;
-    }
-
-    .export-btn, .toggle-btn {
-      position: fixed;
-      bottom: 100px;
-      left: 20px;
-      padding: 10px 15px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .toggle-btn {
-      bottom: 50px;
-      background: #444;
-    }
-
-    .device-toggle {
-      position: fixed;
-      top: 20px;
-      right: 200px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .device-toggle button {
-      padding: 6px 10px;
-      background: #555;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    .device-frame {
-      max-width: 100%;
-      margin: auto;
-      transition: all 0.2s ease;
-    }
-    .mobile .device-frame {
-      width: 375px;
-    }
-    .tablet .device-frame {
-      width: 768px;
-    }
-    .desktop .device-frame {
-      width: 100%;
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampaignCraft Pro - Advanced Email Builder</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- SortableJS for drag-and-drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <style>
+        /* Custom Styles */
+        :root {
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --secondary-color: #f9fafb;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+        }
+        
+        .brand-logo {
+            font-weight: 800;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sidebar-icon {
+            transition: all 0.2s ease;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .sidebar-icon:hover, .sidebar-icon.active {
+            background-color: rgba(99, 102, 241, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .drag-item {
+            transition: all 0.2s ease;
+            cursor: grab;
+            border: 1px solid var(--border-color);
+        }
+        
+        .drag-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-color: var(--primary-color);
+        }
+        
+        .editor-canvas {
+            width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 80vh;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .canvas-block {
+            position: relative;
+            cursor: pointer;
+            border: 2px dashed transparent;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .canvas-block:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        
+        .canvas-block.selected {
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .block-controls {
+            display: none;
+            position: absolute;
+            top: -38px;
+            right: 0;
+            background-color: var(--text-color);
+            color: white;
+            border-radius: 8px;
+            padding: 6px;
+            z-index: 10;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .canvas-block.selected .block-controls {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 6px;
+            cursor: pointer;
+            border-radius: 6px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .control-btn:hover {
+            background-color: #4a5568;
+        }
+        
+        .style-panel-section {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .style-panel-section:last-child {
+            border-bottom: none;
+        }
+        
+        /* Placeholder for empty contenteditable */
+        [contenteditable="true"]:empty:before {
+            content: attr(placeholder);
+            pointer-events: none;
+            display: block;
+            color: #a0aec0;
+        }
+        
+        /* Preview Modal */
+        .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+        
+        .preview-modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .preview-content {
+            background: white;
+            width: 90%;
+            height: 90%;
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .preview-header {
+            padding: 16px;
+            background: var(--text-color);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .preview-body {
+            flex: 1;
+            padding: 20px;
+            overflow: auto;
+            background: #f9fafb;
+        }
+        
+        /* Device Preview */
+        .device-preview {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+        }
+        
+        .device-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            color: var(--text-color);
+        }
+        
+        .device-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Tab styling */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Template Gallery */
+        .template-card {
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .template-thumb {
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #c7d2fe;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+        
+        /* Progress bar */
+        .progress-bar {
+            height: 4px;
+            background: var(--primary-color);
+            width: 0%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            transition: width 0.3s ease;
+        }
+    </style>
 </head>
-<body class="desktop">
+<body class="bg-gray-50 text-gray-800">
+    <div class="progress-bar"></div>
 
-<div class="main-content">
-  <div class="toolbar">
-    <select id="heading">
-      <option value="p">Paragraph</option>
-      <option value="h1">Heading 1</option>
-      <option value="h2">Heading 2</option>
-      <option value="h3">Heading 3</option>
-    </select>
-    <select onchange="document.execCommand('fontSize', false, this.value)">
-      <option value="2">Small</option>
-      <option value="3" selected>Normal</option>
-      <option value="5">Large</option>
-      <option value="6">X-Large</option>
-    </select>
-    <button onclick="format('bold')"><i class="fas fa-bold"></i></button>
-    <button onclick="format('italic')"><i class="fas fa-italic"></i></button>
-    <button onclick="format('underline')"><i class="fas fa-underline"></i></button>
-    <button onclick="format('strikeThrough')"><i class="fas fa-strikethrough"></i></button>
-    <button onclick="format('justifyLeft')"><i class="fas fa-align-left"></i></button>
-    <button onclick="format('justifyCenter')"><i class="fas fa-align-center"></i></button>
-    <button onclick="format('justifyRight')"><i class="fas fa-align-right"></i></button>
-    <button onclick="format('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
-    <button onclick="format('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
-  </div>
+    <div class="flex h-screen">
+        <!-- Left Sidebar: Blocks -->
+        <aside class="w-20 bg-white border-r border-gray-200 flex flex-col items-center py-4">
+            <div class="brand-logo text-2xl mb-8">CC</div>
+            <div class="flex flex-col gap-4 text-center">
+                <div id="add-block-tab" class="sidebar-icon text-gray-600 cursor-pointer active">
+                    <i class="fas fa-plus-square fa-xl"></i>
+                    <span class="text-xs block mt-1">Add</span>
+                </div>
+                <div id="style-tab" class="sidebar-icon text-gray-600 cursor-pointer">
+                    <i class="fas fa-palette fa-xl"></i>
+                    <span class="text-xs block mt-1">Style</span>
+                </div>
+                <div id="templates-tab" class="sidebar-icon text-gray-600 cursor-pointer">
+                    <i class="fas fa-layer-group fa-xl"></i>
+                    <span class="text-xs block mt-1">Templates</span>
+                </div>
+            </div>
+        </aside>
 
-  <div class="stylebar">
-    Font:
-    <select onchange="document.execCommand('fontName', false, this.value)">
-      <option value="Segoe UI">Segoe UI</option>
-      <option value="Arial">Arial</option>
-      <option value="Georgia">Georgia</option>
-      <option value="Courier New">Courier</option>
-      <option value="Tahoma">Tahoma</option>
-      <option value="Verdana">Verdana</option>
-    </select>
-    Background: <input type="color" onchange="document.getElementById('editor').style.backgroundColor = this.value" />
-    Text Color: <input type="color" onchange="document.execCommand('foreColor', false, this.value)">
-    Highlight: <input type="color" onchange="document.execCommand('hiliteColor', false, this.value)">
-  </div>
+        <!-- Block Panel -->
+        <div id="block-panel" class="w-64 bg-white p-4 border-r border-gray-200 overflow-y-auto">
+            <h3 class="font-bold text-lg mb-4">Content Blocks</h3>
+            <div id="block-list" class="grid grid-cols-2 gap-4">
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="text">
+                    <i class="fas fa-paragraph fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Text</span>
+                </div>
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="image">
+                    <i class="fas fa-image fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Image</span>
+                </div>
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="button">
+                    <i class="fas fa-mouse-pointer fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Button</span>
+                </div>
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="divider">
+                    <i class="fas fa-grip-lines fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Divider</span>
+                </div>
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="social">
+                    <i class="fas fa-share-alt fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Social</span>
+                </div>
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="columns">
+                    <i class="fas fa-columns fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Columns</span>
+                </div>
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="spacer">
+                    <i class="fas fa-arrows-alt-v fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Spacer</span>
+                </div>
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="header">
+                    <i class="fas fa-heading fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Header</span>
+                </div>
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="footer">
+                    <i class="fas fa-shoe-prints fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Footer</span>
+                </div>
+                <div class="drag-item bg-white p-4 rounded-lg shadow text-center" data-type="video">
+                    <i class="fas fa-video fa-2x text-indigo-500 mb-2"></i>
+                    <span class="text-sm">Video</span>
+                </div>
+            </div>
+            
+            <!-- Template Gallery -->
+            <div id="templates-panel" class="hidden mt-8">
+                <h3 class="font-bold text-lg mb-4">Email Templates</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="template-card">
+                        <div class="template-thumb bg-gradient-to-r from-blue-400 to-indigo-600"></div>
+                        <div class="p-3 bg-white">
+                            <p class="text-sm font-medium">Modern Newsletter</p>
+                        </div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-thumb bg-gradient-to-r from-purple-400 to-pink-600"></div>
+                        <div class="p-3 bg-white">
+                            <p class="text-sm font-medium">Product Launch</p>
+                        </div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-thumb bg-gradient-to-r from-green-400 to-teal-600"></div>
+                        <div class="p-3 bg-white">
+                            <p class="text-sm font-medium">Promotional</p>
+                        </div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-thumb bg-gradient-to-r from-orange-400 to-red-600"></div>
+                        <div class="p-3 bg-white">
+                            <p class="text-sm font-medium">Event Invitation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <div id="editor" class="canvas device-frame" contenteditable="true"
-       ondragover="event.preventDefault()" ondrop="handleDrop(event)"></div>
+        <!-- Main Content: Editor -->
+        <main class="flex-1 flex flex-col">
+            <!-- Top Toolbar -->
+            <header class="bg-white border-b border-gray-200 p-3 flex justify-between items-center">
+                <div>
+                    <h1 class="text-xl font-semibold flex items-center">
+                        <span>My Campaign</span>
+                        <input type="text" value="My Awesome Campaign" class="ml-2 px-2 py-1 border border-gray-300 rounded-md text-xl font-semibold w-64">
+                    </h1>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="device-preview">
+                        <button class="device-btn active" data-width="800"><i class="fas fa-desktop"></i></button>
+                        <button class="device-btn" data-width="600"><i class="fas fa-tablet"></i></button>
+                        <button class="device-btn" data-width="400"><i class="fas fa-mobile"></i></button>
+                    </div>
+                    <button id="undo-btn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"><i class="fas fa-undo mr-2"></i>Undo</button>
+                    <button id="redo-btn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"><i class="fas fa-redo mr-2"></i>Redo</button>
+                    <button id="preview-btn" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"><i class="fas fa-eye mr-2"></i>Preview</button>
+                    <div class="relative">
+                        <button id="save-btn" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 flex items-center">
+                            <i class="fas fa-save mr-2"></i>Save
+                        </button>
+                        <div class="absolute right-0 top-full mt-1 w-48 bg-white rounded-md shadow-lg py-1 hidden z-10" id="save-options">
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Save as Draft</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Save as Template</a>
+                            <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Save & Schedule</a>
+                        </div>
+                    </div>
+                    <button id="export-btn" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700">Export HTML</button>
+                </div>
+            </header>
 
-  <pre id="preview" class="device-frame"></pre>
-</div>
+            <!-- Editor Canvas -->
+            <div class="flex-1 overflow-y-auto p-8 bg-gray-200">
+                <div id="editor" class="editor-canvas shadow-lg">
+                    <!-- Default content -->
+                    <div class="canvas-block" data-type="header">
+                        <div class="block-controls">
+                            <button class="control-btn duplicate-btn"><i class="fas fa-copy"></i></button>
+                            <button class="control-btn delete-btn"><i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="p-4">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 20px 0; text-align: center;">
+                                                    <h1 contenteditable="true" style="margin: 0; font-size: 24px; color: #4f46e5; font-weight: bold;">Your Brand</h1>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="canvas-block" data-type="text">
+                        <div class="block-controls">
+                            <button class="control-btn duplicate-btn"><i class="fas fa-copy"></i></button>
+                            <button class="control-btn delete-btn"><i class="fas fa-trash"></i></button>
+                        </div>
+                        <div class="p-4">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="600" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 30px 20px; text-align: center;">
+                                                    <h2 contenteditable="true" style="margin: 0 0 20px; font-size: 28px; color: #1f2937;">Welcome to Our Newsletter</h2>
+                                                    <p contenteditable="true" style="margin: 0; font-size: 16px; line-height: 1.6; color: #4b5563;">This is a sample email template created with CampaignCraft Pro. You can edit this text to create your own content.</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
 
-<div class="drag-panel">
-  <h4>Blocks</h4>
-  <div class="drag-item" draggable="true" ondragstart="drag(event, 'text')">Text</div>
-  <div class="drag-item" draggable="true" ondragstart="drag(event, 'image')">Image</div>
-  <div class="drag-item" draggable="true" ondragstart="drag(event, 'section')">Section</div>
-  <div class="drag-item" draggable="true" ondragstart="drag(event, 'button')">Button</div>
-  <div class="drag-item" draggable="true" ondragstart="drag(event, 'divider')">Divider</div>
-</div>
+        <!-- Right Sidebar: Style Panel -->
+        <aside id="style-panel" class="w-80 bg-white border-l border-gray-200 p-4 overflow-y-auto">
+            <div id="global-styles" class="tab-content active">
+                <h3 class="font-bold text-lg mb-4">Global Styles</h3>
+                <div class="style-panel-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Background Color</label>
+                    <div class="flex gap-2">
+                        <input type="color" id="global-bg-color" value="#f3f4f6" class="w-10 h-10 p-1 border border-gray-300 rounded-md cursor-pointer">
+                        <input type="text" id="global-bg-color-text" value="#f3f4f6" class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm">
+                    </div>
+                </div>
+                <div class="style-panel-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Content Background</label>
+                    <div class="flex gap-2">
+                        <input type="color" id="content-bg-color" value="#ffffff" class="w-10 h-10 p-1 border border-gray-300 rounded-md cursor-pointer">
+                        <input type="text" id="content-bg-color-text" value="#ffffff" class="flex-1 border border-gray-300 rounded-md px-3 py-2 text-sm">
+                    </div>
+                </div>
+                <div class="style-panel-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Content Width</label>
+                    <input type="range" min="500" max="800" value="600" class="w-full" id="content-width">
+                    <div class="text-right text-sm text-gray-500 mt-1" id="width-value">600px</div>
+                </div>
+                <div class="style-panel-section">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Font Family</label>
+                    <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                        <option>Arial, sans-serif</option>
+                        <option>Georgia, serif</option>
+                        <option selected>Helvetica, Arial, sans-serif</option>
+                        <option>Verdana, sans-serif</option>
+                        <option>Times New Roman, serif</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="element-styles" class="tab-content">
+                <!-- Dynamic styles based on selected element -->
+            </div>
+        </aside>
+    </div>
 
-<button class="export-btn" onclick="exportHTML()">⬇ Export HTML</button>
-<button class="toggle-btn" onclick="togglePreview()">👁 Preview</button>
+    <!-- Preview Modal -->
+    <div class="preview-modal" id="preview-modal">
+        <div class="preview-content">
+            <div class="preview-header">
+                <h3 class="text-lg font-bold">Email Preview</h3>
+                <button id="close-preview" class="text-white">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="preview-body">
+                <iframe id="preview-frame" style="width: 100%; height: 100%; border: none; background: white;"></iframe>
+            </div>
+        </div>
+    </div>
 
-<div class="device-toggle">
-  <button onclick="setDevice('mobile')">📱</button>
-  <button onclick="setDevice('tablet')">💻</button>
-  <button onclick="setDevice('desktop')">🖥</button>
-</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const editor = document.getElementById('editor');
+            const blockList = document.getElementById('block-list');
+            const stylePanel = document.getElementById('style-panel');
+            const elementStylesContainer = document.getElementById('element-styles');
+            const globalStylesContainer = document.getElementById('global-styles');
+            const templatesPanel = document.getElementById('templates-panel');
+            const previewModal = document.getElementById('preview-modal');
+            const previewFrame = document.getElementById('preview-frame');
+            const progressBar = document.querySelector('.progress-bar');
+            
+            let selectedElement = null;
+            const history = {
+                stack: [editor.innerHTML],
+                limit: 50,
+                position: 0,
+            };
+            
+            // Initialize tabs
+            const tabs = {
+                'add-block-tab': blockList,
+                'templates-tab': templatesPanel,
+                'style-tab': globalStylesContainer
+            };
+            
+            // Initialize SortableJS for the editor
+            const sortable = new Sortable(editor, {
+                animation: 150,
+                ghostClass: 'bg-indigo-100',
+                onEnd: saveState,
+            });
+            
+            // Initialize SortableJS for block list
+            new Sortable(blockList, {
+                group: {
+                    name: 'shared',
+                    pull: 'clone',
+                    put: false
+                },
+                sort: false,
+                onClone: (evt) => {
+                    const origEl = evt.item;
+                    origEl.classList.remove('drag-item');
+                }
+            });
 
-<script>
-  function format(cmd) {
-    document.execCommand(cmd, false, null);
-  }
+            // Editor sortable
+            new Sortable(editor, {
+                group: 'shared',
+                onAdd: function (evt) {
+                    const itemEl = evt.item;
+                    const type = itemEl.dataset.type;
+                    const newBlock = createBlock(type);
+                    itemEl.parentNode.replaceChild(newBlock, itemEl);
+                    selectElement(newBlock);
+                    saveState();
+                }
+            });
 
-  document.getElementById('heading').addEventListener('change', function () {
-    document.execCommand('formatBlock', false, this.value);
-  });
+            // --- Block Creation ---
+            function createBlock(type) {
+                const blockWrapper = document.createElement('div');
+                blockWrapper.className = 'canvas-block p-2';
+                blockWrapper.dataset.type = type;
 
-  function drag(ev, type) {
-    ev.dataTransfer.setData("type", type);
-  }
+                const controls = `
+                    <div class="block-controls">
+                        <button class="control-btn move-btn"><i class="fas fa-arrows-alt"></i></button>
+                        <button class="control-btn duplicate-btn"><i class="fas fa-copy"></i></button>
+                        <button class="control-btn delete-btn"><i class="fas fa-trash"></i></button>
+                    </div>`;
 
-  function handleDrop(e) {
-    const type = e.dataTransfer.getData("type");
-    let block = document.createElement('div');
-    block.className = 'block';
-    block.setAttribute('draggable', true);
-    block.innerHTML = `<button class="remove-btn" onclick="this.parentElement.remove()">×</button>`;
+                let content = '';
+                switch (type) {
+                    case 'text':
+                        content = `<div class="p-4">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 20px;">
+                                                    <div contenteditable="true" class="p-2" placeholder="Start writing..."></div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                    case 'image':
+                        content = `<div class="p-4 text-center bg-gray-100 rounded-md">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 20px;">
+                                                    <img src="https://placehold.co/600x300/e2e8f0/a0aec0?text=Upload+Image" class="max-w-full h-auto mx-auto">
+                                                    <input type="file" class="hidden" accept="image/*">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                    case 'button':
+                        content = `<div class="p-4 text-center">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 20px; text-align: center;">
+                                                    <a href="#" class="inline-block px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md no-underline" contenteditable="true">Click Me</a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                    case 'divider':
+                        content = `<div class="p-4">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 10px 20px;">
+                                                    <hr class="border-gray-300">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                    case 'social':
+                        content = `<div class="p-4 text-center">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 20px;">
+                                                    <a href="#" class="inline-block mx-2"><img src="https://img.icons8.com/color/48/000000/facebook-new.png" width="32"/></a>
+                                                    <a href="#" class="inline-block mx-2"><img src="https://img.icons8.com/color/48/000000/twitter.png" width="32"/></a>
+                                                    <a href="#" class="inline-block mx-2"><img src="https://img.icons8.com/color/48/000000/instagram-new.png" width="32"/></a>
+                                                    <a href="#" class="inline-block mx-2"><img src="https://img.icons8.com/color/48/000000/linkedin.png" width="32"/></a>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                    case 'columns':
+                        content = `<div class="p-4">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 20px;">
+                                                    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                        <tr>
+                                                            <td width="50%" style="padding: 10px; vertical-align: top;">
+                                                                <div contenteditable="true" class="p-4 bg-gray-50 rounded-md" placeholder="Column 1"></div>
+                                                            </td>
+                                                            <td width="50%" style="padding: 10px; vertical-align: top;">
+                                                                <div contenteditable="true" class="p-4 bg-gray-50 rounded-md" placeholder="Column 2"></div>
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                    case 'spacer':
+                        content = `<div class="p-4">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 30px 20px;"></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                    case 'header':
+                        content = `<div class="p-4">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 20px 0; text-align: center;">
+                                                    <h1 contenteditable="true" style="margin: 0; font-size: 24px; color: #4f46e5; font-weight: bold;">Your Brand</h1>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                    case 'footer':
+                        content = `<div class="p-4">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 30px 20px; text-align: center; background-color: #f9fafb;">
+                                                    <p style="margin: 0; font-size: 14px; color: #6b7280;">&copy; 2025 Your Company. All rights reserved.</p>
+                                                    <p style="margin: 10px 0 0; font-size: 12px; color: #9ca3af;">
+                                                        <a href="#" style="color: #9ca3af; text-decoration: none;">Unsubscribe</a> | 
+                                                        <a href="#" style="color: #9ca3af; text-decoration: none;">Privacy Policy</a>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                    case 'video':
+                        content = `<div class="p-4">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                                <tr>
+                                    <td align="center">
+                                        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #ffffff;">
+                                            <tr>
+                                                <td style="padding: 20px; text-align: center;">
+                                                    <div class="relative pb-[56.25%] h-0">
+                                                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/dQw4w9WgXcQ" frameborder="0" allowfullscreen></iframe>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>`;
+                        break;
+                }
+                blockWrapper.innerHTML = controls + content;
+                return blockWrapper;
+            }
+            
+            // --- Element Selection & Styling ---
+            function selectElement(el) {
+                if (selectedElement) {
+                    selectedElement.classList.remove('selected');
+                }
+                selectedElement = el;
+                if (selectedElement) {
+                    selectedElement.classList.add('selected');
+                    updateStylePanel();
+                }
+            }
+            
+            function updateStylePanel() {
+                if (!selectedElement) {
+                    globalStylesContainer.classList.remove('hidden');
+                    elementStylesContainer.classList.add('hidden');
+                    return;
+                }
 
-    if (type === 'text') {
-      block.innerHTML += `<div contenteditable="true">Write text here...</div>`;
-    } else if (type === 'image') {
-      block.innerHTML += `<input type="file" accept="image/*" onchange="previewImage(event, this)"><br><img style="max-width:100%;display:none;">`;
-    } else if (type === 'section') {
-      block.innerHTML += `<div contenteditable="true"><h2>Section Title</h2><p>Details go here...</p></div>`;
-    } else if (type === 'button') {
-      block.innerHTML += `<div contenteditable="true"><a href="#" style="padding:10px 20px;background:#007bff;color:#fff;border-radius:5px;text-decoration:none;">Click Here</a></div>`;
-    } else if (type === 'divider') {
-      block.innerHTML += `<hr style="border: 1px solid #ccc;" />`;
-    }
+                globalStylesContainer.classList.add('hidden');
+                elementStylesContainer.classList.remove('hidden');
+                elementStylesContainer.innerHTML = '';
 
-    e.target.appendChild(block);
-  }
+                const type = selectedElement.dataset.type;
+                let stylesHtml = `<h3 class="font-bold text-lg mb-4">${type.charAt(0).toUpperCase() + type.slice(1)} Settings</h3>`;
+                
+                // Generic padding/margin controls
+                stylesHtml += createStyleSection('Spacing', `
+                    <label class="block text-sm font-medium text-gray-700">Padding Top</label>
+                    <input type="range" min="0" max="50" value="20" class="w-full" data-style="paddingTop" data-unit="px">
+                    <label class="block text-sm font-medium text-gray-700 mt-2">Padding Bottom</label>
+                    <input type="range" min="0" max="50" value="20" class="w-full" data-style="paddingBottom" data-unit="px">
+                `);
 
-  function previewImage(event, input) {
-    const file = input.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const img = input.nextElementSibling;
-      img.src = e.target.result;
-      img.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
-  }
+                const innerEditable = selectedElement.querySelector('[contenteditable="true"]');
+                const innerImage = selectedElement.querySelector('img');
+                const innerButton = selectedElement.querySelector('a');
 
-  function exportHTML() {
-    const content = document.getElementById('editor').innerHTML;
-    const blob = new Blob([`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Email</title></head><body>${content}</body></html>`], { type: "text/html" });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = "mailora-email.html";
-    a.click();
-  }
+                switch (type) {
+                    case 'text':
+                        stylesHtml += createStyleSection('Typography', `
+                            <label class="block text-sm font-medium text-gray-700">Font Size (px)</label>
+                            <input type="number" value="16" class="w-full border border-gray-300 p-1 rounded-md" data-target-style="fontSize" data-unit="px">
+                            <label class="block text-sm font-medium text-gray-700 mt-2">Font Weight</label>
+                            <select class="w-full border border-gray-300 p-1 rounded-md" data-target-style="fontWeight">
+                                <option value="400">Regular</option>
+                                <option value="600">Semibold</option>
+                                <option value="700">Bold</option>
+                            </select>
+                            <label class="block text-sm font-medium text-gray-700 mt-2">Text Color</label>
+                            <input type="color" value="#1f2937" class="w-full h-8 p-1 border border-gray-300 rounded-md" data-target-style="color">
+                            <label class="block text-sm font-medium text-gray-700 mt-2">Alignment</label>
+                            <div class="flex gap-2 mt-1">
+                                <button class="alignment-btn flex-1 py-2 border border-gray-300 rounded-md" data-align="left"><i class="fas fa-align-left"></i></button>
+                                <button class="alignment-btn flex-1 py-2 border border-gray-300 rounded-md" data-align="center"><i class="fas fa-align-center"></i></button>
+                                <button class="alignment-btn flex-1 py-2 border border-gray-300 rounded-md" data-align="right"><i class="fas fa-align-right"></i></button>
+                                <button class="alignment-btn flex-1 py-2 border border-gray-300 rounded-md" data-align="justify"><i class="fas fa-align-justify"></i></button>
+                            </div>
+                        `);
+                        break;
+                    case 'image':
+                         stylesHtml += createStyleSection('Image Settings', `
+                            <label class="block text-sm font-medium text-gray-700">Image URL</label>
+                            <input type="text" value="${innerImage.src}" class="w-full border border-gray-300 p-1 rounded-md mb-2" data-target-attr="src">
+                            <label class="block text-sm font-medium text-gray-700">Alternative Text</label>
+                            <input type="text" value="${innerImage.alt || ''}" class="w-full border border-gray-300 p-1 rounded-md mb-2" data-target-attr="alt">
+                            <label class="block text-sm font-medium text-gray-700">Link URL</label>
+                            <input type="text" value="" class="w-full border border-gray-300 p-1 rounded-md mb-2" data-target-attr="href">
+                            <label class="block text-sm font-medium text-gray-700">Width (%)</label>
+                            <input type="range" min="10" max="100" value="100" class="w-full" data-target-style="width" data-unit="%">
+                            <button class="mt-3 w-full px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700" onclick="this.closest('.canvas-block').querySelector('input[type=file]').click();">Upload Image</button>
+                        `);
+                        break;
+                    case 'button':
+                        stylesHtml += createStyleSection('Button Styles', `
+                            <label class="block text-sm font-medium text-gray-700">Background Color</label>
+                            <input type="color" value="#6366f1" class="w-full h-8 p-1 border border-gray-300 rounded-md" data-target-style="backgroundColor">
+                            <label class="block text-sm font-medium text-gray-700 mt-2">Text Color</label>
+                            <input type="color" value="#ffffff" class="w-full h-8 p-1 border border-gray-300 rounded-md" data-target-style="color">
+                            <label class="block text-sm font-medium text-gray-700 mt-2">Button Text</label>
+                            <input type="text" value="Click Me" class="w-full border border-gray-300 p-1 rounded-md" data-target-text="true">
+                            <label class="block text-sm font-medium text-gray-700 mt-2">Link URL</label>
+                            <input type="text" value="#" class="w-full border border-gray-300 p-1 rounded-md" data-target-attr="href">
+                            <label class="block text-sm font-medium text-gray-700 mt-2">Border Radius</label>
+                            <input type="range" min="0" max="50" value="6" class="w-full" data-target-style="borderRadius" data-unit="px">
+                        `);
+                        break;
+                    case 'spacer':
+                        stylesHtml += createStyleSection('Spacer Settings', `
+                            <label class="block text-sm font-medium text-gray-700">Height (px)</label>
+                            <input type="range" min="10" max="200" value="40" class="w-full" data-target-style="height" data-unit="px">
+                        `);
+                        break;
+                }
 
-  function togglePreview() {
-    const preview = document.getElementById('preview');
-    const editor = document.getElementById('editor');
-    if (preview.style.display === 'block') {
-      preview.style.display = 'none';
-      editor.style.display = 'block';
-    } else {
-      preview.textContent = editor.innerHTML;
-      preview.style.display = 'block';
-      editor.style.display = 'none';
-    }
-  }
+                elementStylesContainer.innerHTML = stylesHtml;
+            }
+            
+            function createStyleSection(title, content) {
+                return `<div class="style-panel-section"><h4 class="font-semibold text-md mb-2">${title}</h4>${content}</div>`;
+            }
 
-  function setDevice(mode) {
-    document.body.className = mode;
-  }
-</script>
+            // --- Event Handlers ---
+            document.addEventListener('click', (e) => {
+                // Sidebar tabs
+                if (e.target.closest('.sidebar-icon')) {
+                    const tabId = e.target.closest('.sidebar-icon').id;
+                    document.querySelectorAll('.sidebar-icon').forEach(icon => {
+                        icon.classList.remove('active');
+                    });
+                    e.target.closest('.sidebar-icon').classList.add('active');
+                    
+                    // Show the corresponding panel
+                    Object.keys(tabs).forEach(key => {
+                        tabs[key].classList.add('hidden');
+                    });
+                    tabs[tabId].classList.remove('hidden');
+                }
+                
+                // Canvas block selection
+                const clickedBlock = e.target.closest('.canvas-block');
+                if (clickedBlock) {
+                    selectElement(clickedBlock);
+                } else if (!e.target.closest('#style-panel')) {
+                    // Deselect if clicking outside
+                    if(selectedElement) {
+                        selectedElement.classList.remove('selected');
+                        selectedElement = null;
+                        updateStylePanel();
+                    }
+                }
+                
+                // Save options dropdown
+                if (e.target.closest('#save-btn')) {
+                    document.getElementById('save-options').classList.toggle('hidden');
+                } else {
+                    document.getElementById('save-options').classList.add('hidden');
+                }
+                
+                // Device preview buttons
+                if (e.target.closest('.device-btn')) {
+                    document.querySelectorAll('.device-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    e.target.closest('.device-btn').classList.add('active');
+                    const width = e.target.closest('.device-btn').dataset.width;
+                    editor.style.width = width + 'px';
+                }
+                
+                // Alignment buttons
+                if (e.target.closest('.alignment-btn')) {
+                    e.preventDefault();
+                    const align = e.target.closest('.alignment-btn').dataset.align;
+                    if (selectedElement) {
+                        const editable = selectedElement.querySelector('[contenteditable="true"]');
+                        if (editable) {
+                            editable.style.textAlign = align;
+                            saveState();
+                        }
+                    }
+                }
+            });
 
+            editor.addEventListener('input', (e) => {
+                if(e.target.hasAttribute('contenteditable')){
+                    saveState();
+                }
+            });
+
+            stylePanel.addEventListener('input', (e) => {
+                if (!selectedElement) { // Global styles
+                    const editorDiv = document.getElementById('editor');
+                    if(e.target.id === 'global-bg-color' || e.target.id === 'global-bg-color-text') {
+                        const color = e.target.id === 'global-bg-color' ? e.target.value : e.target.value;
+                        document.querySelector('.bg-gray-200').style.backgroundColor = color;
+                        document.getElementById('global-bg-color').value = color;
+                        document.getElementById('global-bg-color-text').value = color;
+                    } else if (e.target.id === 'content-bg-color' || e.target.id === 'content-bg-color-text') {
+                        const color = e.target.id === 'content-bg-color' ? e.target.value : e.target.value;
+                        editorDiv.style.backgroundColor = color;
+                        document.getElementById('content-bg-color').value = color;
+                        document.getElementById('content-bg-color-text').value = color;
+                    } else if (e.target.id === 'content-width') {
+                        const width = e.target.value + 'px';
+                        document.querySelectorAll('#editor > .canvas-block > div > table > tr > td > table').forEach(table => {
+                            table.setAttribute('width', e.target.value);
+                        });
+                        document.getElementById('width-value').textContent = width;
+                    }
+                } else { // Element styles
+                    const styleProp = e.target.dataset.style;
+                    const attrProp = e.target.dataset.targetAttr;
+                    const styleTarget = e.target.dataset.targetStyle;
+                    const textTarget = e.target.dataset.targetText;
+                    
+                    if (styleProp) {
+                        selectedElement.style[styleProp] = e.target.value + (e.target.dataset.unit || '');
+                    }
+                    if (attrProp) {
+                        const target = selectedElement.querySelector('img, a');
+                        if(target) target[attrProp] = e.target.value;
+                    }
+                    if (styleTarget) {
+                         const target = selectedElement.querySelector('[contenteditable], a');
+                         if(target) target.style[styleTarget] = e.target.value + (e.target.dataset.unit || '');
+                    }
+                    if (textTarget) {
+                         const target = selectedElement.querySelector('[contenteditable], a');
+                         if(target) target.textContent = e.target.value;
+                    }
+                }
+                saveState();
+            });
+
+            editor.addEventListener('change', e => {
+                // Handle file input for images
+                if (e.target.type === 'file') {
+                    const file = e.target.files[0];
+                    if (file) {
+                        // Show progress bar
+                        progressBar.style.width = '30%';
+                        
+                        setTimeout(() => {
+                            progressBar.style.width = '70%';
+                            
+                            setTimeout(() => {
+                                const reader = new FileReader();
+                                reader.onload = (event) => {
+                                    const img = e.target.previousElementSibling;
+                                    img.src = event.target.result;
+                                    saveState();
+                                    progressBar.style.width = '100%';
+                                    setTimeout(() => progressBar.style.width = '0%', 300);
+                                };
+                                reader.readAsDataURL(file);
+                            }, 300);
+                        }, 300);
+                    }
+                }
+            });
+            
+            editor.addEventListener('click', e => {
+                if (e.target.closest('.delete-btn')) {
+                    e.target.closest('.canvas-block').remove();
+                    selectedElement = null;
+                    updateStylePanel();
+                    saveState();
+                }
+                if (e.target.closest('.duplicate-btn')) {
+                    const block = e.target.closest('.canvas-block');
+                    const clone = block.cloneNode(true);
+                    clone.classList.remove('selected');
+                    block.after(clone);
+                    saveState();
+                }
+            });
+
+            // Preview functionality
+            document.getElementById('preview-btn').addEventListener('click', () => {
+                const cleanHtml = getCleanHtml();
+                previewFrame.srcdoc = cleanHtml;
+                previewModal.classList.add('active');
+            });
+            
+            document.getElementById('close-preview').addEventListener('click', () => {
+                previewModal.classList.remove('active');
+            });
+
+            // Export functionality
+            document.getElementById('export-btn').addEventListener('click', () => {
+                const cleanHtml = getCleanHtml();
+                const blob = new Blob([cleanHtml], { type: 'text/html' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'campaigncraft-email.html';
+                a.click();
+                URL.revokeObjectURL(a.href);
+            });
+
+            // --- History (Undo/Redo) ---
+            function saveState() {
+                clearTimeout(window.saveTimeout);
+                window.saveTimeout = setTimeout(() => {
+                    const currentHtml = editor.innerHTML;
+                    if (history.stack[history.position] === currentHtml) return;
+
+                    if (history.position < history.stack.length - 1) {
+                        history.stack = history.stack.slice(0, history.position + 1);
+                    }
+                    history.stack.push(currentHtml);
+                    if (history.stack.length > history.limit) {
+                        history.stack.shift();
+                    }
+                    history.position = history.stack.length - 1;
+                }, 300);
+            }
+
+            function undo() {
+                if (history.position > 0) {
+                    history.position--;
+                    editor.innerHTML = history.stack[history.position];
+                }
+            }
+
+            function redo() {
+                if (history.position < history.stack.length - 1) {
+                    history.position++;
+                    editor.innerHTML = history.stack[history.position];
+                }
+            }
+            
+            document.getElementById('undo-btn').addEventListener('click', undo);
+            document.getElementById('redo-btn').addEventListener('click', redo);
+
+            // --- Utility Functions ---
+            function getCleanHtml() {
+                const tempEditor = document.createElement('div');
+                tempEditor.innerHTML = editor.innerHTML;
+                
+                // Remove controls and selection borders
+                tempEditor.querySelectorAll('.block-controls, .selected').forEach(el => {
+                    if(el.classList.contains('selected')) el.classList.remove('selected');
+                    else el.remove();
+                });
+                
+                // Remove editor-specific classes
+                tempEditor.querySelectorAll('.canvas-block').forEach(el => {
+                    el.classList.remove('canvas-block');
+                    el.removeAttribute('data-type');
+                    el.style.border = '';
+                    el.style.boxShadow = '';
+                    el.style.margin = '';
+                });
+                
+                // Get global styles
+                const globalBG = document.getElementById('global-bg-color').value;
+                const contentBG = document.getElementById('content-bg-color').value;
+                const contentWidth = document.getElementById('content-width').value;
+
+                return `<!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Email Campaign</title>
+                        <style>
+                            body { 
+                                margin: 0; 
+                                padding: 20px 0; 
+                                background-color: ${globalBG}; 
+                                font-family: Arial, sans-serif;
+                            }
+                            .email-container { 
+                                max-width: ${contentWidth}px; 
+                                margin: 0 auto; 
+                                background-color: ${contentBG}; 
+                                border-radius: 8px;
+                                overflow: hidden;
+                                box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+                            }
+                            img { 
+                                max-width: 100%; 
+                                height: auto; 
+                                display: block;
+                            }
+                            a { 
+                                text-decoration: none; 
+                                color: #6366f1;
+                            }
+                            @media only screen and (max-width: 620px) {
+                                .email-container {
+                                    width: 100% !important;
+                                }
+                                .mobile-full-width {
+                                    width: 100% !important;
+                                }
+                                .mobile-stack {
+                                    display: block !important;
+                                    width: 100% !important;
+                                }
+                                .mobile-center {
+                                    text-align: center !important;
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="email-container">
+                            ${tempEditor.innerHTML}
+                        </div>
+                    </body>
+                    </html>`;
+            }
+        });
+    </script>
 </body>
 </html>
