@@ -9,25 +9,37 @@
     body {
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f4f4f4;
+      background: #f9f9fb;
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
     }
     .toolbar, .stylebar {
       display: flex;
-      flex-wrap: wrap;
       gap: 10px;
-      padding: 10px;
-      background: #eee;
-      border-bottom: 1px solid #ccc;
+      padding: 10px 20px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
     }
     .toolbar button, .toolbar select,
     .stylebar input, .stylebar select {
-      padding: 6px 10px;
+      padding: 6px 12px;
       cursor: pointer;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
     }
     #editor, #preview {
-      min-height: 80vh;
+      flex: 1;
+      overflow-y: auto;
       background: #fff;
-      padding: 20px;
+      padding: 30px;
       font-size: 16px;
     }
     #preview {
@@ -35,18 +47,18 @@
       white-space: pre-wrap;
     }
     .block {
-      border: 1px dashed #999;
-      background: #fafafa;
-      margin-bottom: 10px;
-      padding: 10px;
+      border: 1px dashed #ccc;
+      background: #fefefe;
+      margin-bottom: 12px;
+      padding: 14px;
       position: relative;
       cursor: move;
     }
     .remove-btn {
       position: absolute;
-      top: 5px;
-      right: 5px;
-      background: red;
+      top: 6px;
+      right: 6px;
+      background: #e74c3c;
       color: white;
       border: none;
       border-radius: 50%;
@@ -55,55 +67,74 @@
       font-size: 14px;
       cursor: pointer;
     }
-    .drag-zone {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      background: #1e1e1e;
+
+    .drag-panel {
+      width: 180px;
+      background: #2b2d42;
       color: white;
       display: flex;
-      justify-content: center;
-      gap: 20px;
-      padding: 14px;
-      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 10px;
+      gap: 10px;
+      border-left: 1px solid #1a1a1a;
+    }
+    .drag-panel h4 {
+      color: #ccc;
+      font-weight: normal;
+      margin-bottom: 12px;
     }
     .drag-item {
-      background: #333;
-      padding: 10px 15px;
+      width: 100%;
+      background: #3a3d5c;
+      padding: 10px 12px;
       border-radius: 6px;
+      text-align: center;
       cursor: grab;
+      user-select: none;
+      transition: background 0.2s;
     }
+    .drag-item:hover {
+      background: #4e5170;
+    }
+
     .export-btn, .toggle-btn {
       position: fixed;
       bottom: 100px;
-      right: 20px;
+      left: 20px;
       padding: 10px 15px;
       background: #007bff;
       color: white;
       border: none;
-      border-radius: 5px;
-      margin-top: 5px;
+      border-radius: 6px;
       cursor: pointer;
     }
+
+    .toggle-btn {
+      bottom: 50px;
+      background: #444;
+    }
+
     .device-toggle {
       position: fixed;
-      bottom: 160px;
-      right: 20px;
+      top: 20px;
+      right: 200px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 6px;
     }
     .device-toggle button {
-      padding: 5px 10px;
-      background: #444;
+      padding: 6px 10px;
+      background: #555;
       color: #fff;
       border: none;
       border-radius: 5px;
       cursor: pointer;
     }
+
     .device-frame {
       max-width: 100%;
-      margin: 10px auto;
+      margin: auto;
       transition: all 0.2s ease;
     }
     .mobile .device-frame {
@@ -119,51 +150,54 @@
 </head>
 <body class="desktop">
 
-<div class="toolbar">
-  <select id="heading">
-    <option value="p">Paragraph</option>
-    <option value="h1">Heading 1</option>
-    <option value="h2">Heading 2</option>
-    <option value="h3">Heading 3</option>
-  </select>
-  <select onchange="document.execCommand('fontSize', false, this.value)">
-    <option value="2">Small</option>
-    <option value="3" selected>Normal</option>
-    <option value="5">Large</option>
-    <option value="6">X-Large</option>
-  </select>
-  <button onclick="format('bold')"><i class="fas fa-bold"></i></button>
-  <button onclick="format('italic')"><i class="fas fa-italic"></i></button>
-  <button onclick="format('underline')"><i class="fas fa-underline"></i></button>
-  <button onclick="format('strikeThrough')"><i class="fas fa-strikethrough"></i></button>
-  <button onclick="format('justifyLeft')"><i class="fas fa-align-left"></i></button>
-  <button onclick="format('justifyCenter')"><i class="fas fa-align-center"></i></button>
-  <button onclick="format('justifyRight')"><i class="fas fa-align-right"></i></button>
-  <button onclick="format('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
-  <button onclick="format('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
+<div class="main-content">
+  <div class="toolbar">
+    <select id="heading">
+      <option value="p">Paragraph</option>
+      <option value="h1">Heading 1</option>
+      <option value="h2">Heading 2</option>
+      <option value="h3">Heading 3</option>
+    </select>
+    <select onchange="document.execCommand('fontSize', false, this.value)">
+      <option value="2">Small</option>
+      <option value="3" selected>Normal</option>
+      <option value="5">Large</option>
+      <option value="6">X-Large</option>
+    </select>
+    <button onclick="format('bold')"><i class="fas fa-bold"></i></button>
+    <button onclick="format('italic')"><i class="fas fa-italic"></i></button>
+    <button onclick="format('underline')"><i class="fas fa-underline"></i></button>
+    <button onclick="format('strikeThrough')"><i class="fas fa-strikethrough"></i></button>
+    <button onclick="format('justifyLeft')"><i class="fas fa-align-left"></i></button>
+    <button onclick="format('justifyCenter')"><i class="fas fa-align-center"></i></button>
+    <button onclick="format('justifyRight')"><i class="fas fa-align-right"></i></button>
+    <button onclick="format('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
+    <button onclick="format('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
+  </div>
+
+  <div class="stylebar">
+    Font:
+    <select onchange="document.execCommand('fontName', false, this.value)">
+      <option value="Segoe UI">Segoe UI</option>
+      <option value="Arial">Arial</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Courier New">Courier</option>
+      <option value="Tahoma">Tahoma</option>
+      <option value="Verdana">Verdana</option>
+    </select>
+    Background: <input type="color" onchange="document.getElementById('editor').style.backgroundColor = this.value" />
+    Text Color: <input type="color" onchange="document.execCommand('foreColor', false, this.value)">
+    Highlight: <input type="color" onchange="document.execCommand('hiliteColor', false, this.value)">
+  </div>
+
+  <div id="editor" class="canvas device-frame" contenteditable="true"
+       ondragover="event.preventDefault()" ondrop="handleDrop(event)"></div>
+
+  <pre id="preview" class="device-frame"></pre>
 </div>
 
-<div class="stylebar">
-  Font:
-  <select onchange="document.execCommand('fontName', false, this.value)">
-    <option value="Segoe UI">Segoe UI</option>
-    <option value="Arial">Arial</option>
-    <option value="Georgia">Georgia</option>
-    <option value="Courier New">Courier</option>
-    <option value="Tahoma">Tahoma</option>
-    <option value="Verdana">Verdana</option>
-  </select>
-  Background: <input type="color" onchange="document.getElementById('editor').style.backgroundColor = this.value" />
-  Text Color: <input type="color" onchange="document.execCommand('foreColor', false, this.value)">
-  Highlight: <input type="color" onchange="document.execCommand('hiliteColor', false, this.value)">
-</div>
-
-<div id="editor" class="canvas device-frame" contenteditable="true"
-     ondragover="event.preventDefault()" ondrop="handleDrop(event)"></div>
-
-<pre id="preview" class="device-frame"></pre>
-
-<div class="drag-zone">
+<div class="drag-panel">
+  <h4>Blocks</h4>
   <div class="drag-item" draggable="true" ondragstart="drag(event, 'text')">Text</div>
   <div class="drag-item" draggable="true" ondragstart="drag(event, 'image')">Image</div>
   <div class="drag-item" draggable="true" ondragstart="drag(event, 'section')">Section</div>
@@ -171,13 +205,13 @@
   <div class="drag-item" draggable="true" ondragstart="drag(event, 'divider')">Divider</div>
 </div>
 
-<button class="export-btn" onclick="exportHTML()">⬇ Export All</button>
-<button class="toggle-btn" onclick="togglePreview()">👁 Toggle Preview</button>
+<button class="export-btn" onclick="exportHTML()">⬇ Export HTML</button>
+<button class="toggle-btn" onclick="togglePreview()">👁 Preview</button>
 
 <div class="device-toggle">
-  <button onclick="setDevice('mobile')">📱 Mobile</button>
-  <button onclick="setDevice('tablet')">💻 Tablet</button>
-  <button onclick="setDevice('desktop')">🖥 Desktop</button>
+  <button onclick="setDevice('mobile')">📱</button>
+  <button onclick="setDevice('tablet')">💻</button>
+  <button onclick="setDevice('desktop')">🖥</button>
 </div>
 
 <script>
@@ -229,7 +263,7 @@
 
   function exportHTML() {
     const content = document.getElementById('editor').innerHTML;
-    const blob = new Blob([`<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Email</title></head><body>${content}</body></html>`], { type: "text/html" });
+    const blob = new Blob([`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Email</title></head><body>${content}</body></html>`], { type: "text/html" });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = "mailora-email.html";
