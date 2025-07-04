@@ -5,12 +5,40 @@
   <title>Mailora Builder</title>
   <link href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" rel="stylesheet"/>
   <style>
-    body, html { margin: 0; height: 100%; }
-    #gjs { height: 100vh; }
+    body, html {
+      margin: 0;
+      height: 100%;
+      font-family: Arial, sans-serif;
+    }
+    #gjs {
+      height: 90vh;
+      border-bottom: 1px solid #ccc;
+    }
+    .export-panel {
+      padding: 10px;
+      text-align: center;
+    }
+    .export-panel button {
+      background-color: #111827;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .export-panel button:hover {
+      background-color: #1f2937;
+    }
   </style>
 </head>
 <body>
+
   <div id="gjs"></div>
+
+  <div class="export-panel">
+    <button onclick="downloadHTML()">⬇ Export HTML</button>
+  </div>
 
   <script src="https://unpkg.com/grapesjs"></script>
   <script>
@@ -20,20 +48,7 @@
       fromElement: false,
       storageManager: false,
       panels: {
-        defaults: [
-          {
-            id: 'basic-actions',
-            el: '.panel__basic-actions',
-            buttons: [
-              {
-                id: 'visibility',
-                active: true,
-                label: '<u>B</u>',
-                command: 'sw-visibility',
-              },
-            ],
-          },
-        ]
+        defaults: []
       },
       blockManager: {
         appendTo: '#gjs',
@@ -42,7 +57,7 @@
             id: 'section',
             label: 'Section',
             attributes: { class: 'gjs-block-section' },
-            content: '<section class="section">Your section here</section>',
+            content: '<section class="section"><h1>Section Title</h1><p>Start writing here...</p></section>',
           },
           {
             id: 'text',
@@ -52,11 +67,28 @@
           {
             id: 'image',
             label: 'Image',
-            content: '<img src="https://via.placeholder.com/350x250"/>',
+            content: '<img src="https://via.placeholder.com/600x200"/>',
           }
         ]
       }
     });
+
+    function downloadHTML() {
+      const html = editor.getHtml();
+      const css = editor.getCss();
+      const fullHtml = `
+        <html>
+          <head><style>${css}</style></head>
+          <body>${html}</body>
+        </html>`;
+      
+      const blob = new Blob([fullHtml], { type: 'text/html' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'mailora-template.html';
+      link.click();
+    }
   </script>
+
 </body>
 </html>
